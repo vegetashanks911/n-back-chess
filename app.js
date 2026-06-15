@@ -7,13 +7,15 @@
 const FILES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-// Both colors use the same (solid) glyph set; the outline glyphs
-// (U+2654-2659) render as hollow shapes in most fonts and don't take a
-// solid fill color, so white pieces would look like faint outlines.
-// Using the filled glyphs for both and coloring via CSS keeps white
-// pieces clearly visible as solid white pieces with a dark outline.
+// Use the Unicode-intended glyph per color (white pieces U+2654-2659,
+// black pieces U+265A-265F). On platforms that render these as colored
+// emoji (notably iOS/macOS Safari via Apple Color Emoji), CSS `color`
+// is ignored, but each codepoint already has the correct built-in
+// white/black coloring. The .piece-white/.piece-black CSS rules below
+// additionally improve contrast on platforms that render them as plain
+// monochrome text glyphs (e.g. desktop Chrome/Edge on Windows).
 const PIECE_UNICODE = {
-  w: { p: '♟', n: '♞', b: '♝', r: '♜', q: '♛', k: '♚' },
+  w: { p: '♙', n: '♘', b: '♗', r: '♖', q: '♕', k: '♔' },
   b: { p: '♟', n: '♞', b: '♝', r: '♜', q: '♛', k: '♚' },
 };
 
@@ -122,6 +124,11 @@ function pumpSpeechQueue() {
 
   const utter = new SpeechSynthesisUtterance(letter);
   utter.rate = 0.85;
+  // Without an explicit lang, some platforms (e.g. iOS with a German
+  // system voice) read a bare capital letter as "Grossbuchstabe K"
+  // instead of just the letter sound. Forcing English picks a voice
+  // that speaks the letter name directly.
+  utter.lang = 'en-US';
 
   const advance = () => {
     if (!speechBusy) return;
