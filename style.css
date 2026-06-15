@@ -360,8 +360,8 @@ button:disabled {
 #palette button.eraser { font-size: 1rem; }
 
 #recon-board {
-  width: min(86vw, 420px);
-  height: min(86vw, 420px);
+  width: min(100%, 420px);
+  aspect-ratio: 1 / 1;
   margin: 0 auto 14px;
   display: grid;
   grid-template-columns: repeat(8, 1fr);
@@ -369,10 +369,11 @@ button:disabled {
   border: 3px solid #444;
   border-radius: 4px;
   overflow: hidden;
+  container-type: inline-size;
 }
 
 #recon-board .square {
-  font-size: calc(min(86vw, 420px) / 11);
+  font-size: 9cqw;
 }
 
 #recon-board .square.diff-correct { box-shadow: inset 0 0 0 3px var(--good); }
