@@ -160,6 +160,7 @@ button:disabled {
   align-items: center;
   justify-content: center;
   font-size: calc(var(--board-size) / 11);
+  font-variant-emoji: text;
   user-select: none;
   cursor: pointer;
 }

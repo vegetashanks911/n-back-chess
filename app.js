@@ -7,16 +7,15 @@
 const FILES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-// Use the Unicode-intended glyph per color (white pieces U+2654-2659,
-// black pieces U+265A-265F). On platforms that render these as colored
-// emoji (notably iOS/macOS Safari via Apple Color Emoji), CSS `color`
-// is ignored, but each codepoint already has the correct built-in
-// white/black coloring. The .piece-white/.piece-black CSS rules below
-// additionally improve contrast on platforms that render them as plain
-// monochrome text glyphs (e.g. desktop Chrome/Edge on Windows).
+// U+FE0E (variation selector 15) after each glyph requests text/monochrome
+// presentation. Without it, ♟ (U+265F) and ♙ (U+2659) have emoji
+// presentation by default on iOS/macOS, making pawns render at emoji size
+// while the other pieces render as plain text glyphs — causing pawns to
+// look bigger than everything else. VS-15 forces consistent text rendering
+// and also lets CSS color/text-shadow control piece colors.
 const PIECE_UNICODE = {
-  w: { p: '♙', n: '♘', b: '♗', r: '♖', q: '♕', k: '♔' },
-  b: { p: '♟', n: '♞', b: '♝', r: '♜', q: '♛', k: '♚' },
+  w: { p: '♙︎', n: '♘︎', b: '♗︎', r: '♖︎', q: '♕︎', k: '♔︎' },
+  b: { p: '♟︎', n: '♞︎', b: '♝︎', r: '♜︎', q: '♛︎', k: '♚︎' },
 };
 
 const PIECE_VALUES = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 20000 };
@@ -122,13 +121,15 @@ function pumpSpeechQueue() {
   if (letter === undefined) return;
   speechBusy = true;
 
-  const utter = new SpeechSynthesisUtterance(letter);
+  // Speak lowercase: German TTS voices say "Grossbuchstabe K" for a bare
+  // uppercase letter but just "k" for lowercase. Using getVoices() at
+  // speak-time (voices are loaded async and usually ready by the first
+  // move) to explicitly pick an English voice as a further safeguard.
+  const utter = new SpeechSynthesisUtterance(letter.toLowerCase());
   utter.rate = 0.85;
-  // Without an explicit lang, some platforms (e.g. iOS with a German
-  // system voice) read a bare capital letter as "Grossbuchstabe K"
-  // instead of just the letter sound. Forcing English picks a voice
-  // that speaks the letter name directly.
   utter.lang = 'en-US';
+  const enVoice = speechSynthesis.getVoices().find(v => v.lang.startsWith('en'));
+  if (enVoice) utter.voice = enVoice;
 
   const advance = () => {
     if (!speechBusy) return;
