@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>N-Back Chess</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <header>
+    <h1>N-Back Chess</h1>
+    <p class="subtitle">Play chess. Listen for a letter every move. Stay sharp &mdash; you might be asked to recall it, and rebuild the board.</p>
+  </header>
+
+  <!-- ============ SETUP SCREEN ============ -->
+  <section id="setup-screen">
+    <h2>New Game</h2>
+
+    <div class="field">
+      <label for="bot-level">Bot strength</label>
+      <select id="bot-level">
+        <option value="1">1 &ndash; Random (very easy)</option>
+        <option value="2">2 &ndash; Casual</option>
+        <option value="3" selected>3 &ndash; Club player</option>
+        <option value="4">4 &ndash; Strong</option>
+        <option value="5">5 &ndash; Very strong (slow)</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="player-color">Play as</label>
+      <select id="player-color">
+        <option value="w" selected>White</option>
+        <option value="b">Black</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="avg-n">Average N (memory span): <span id="avg-n-val">3</span></label>
+      <input type="range" id="avg-n" min="1" max="8" step="1" value="3">
+      <div class="hint">Recall queries will ask about roughly this many moves back, varying randomly around this value.</div>
+    </div>
+
+    <div class="field">
+      <label for="challenge-prob">Challenge frequency: <span id="challenge-prob-val">20</span>%</label>
+      <input type="range" id="challenge-prob" min="5" max="60" step="5" value="20">
+      <div class="hint">Chance, after each move, that you'll be asked to recall a letter and rebuild the position.</div>
+    </div>
+
+    <div class="field checkbox-field">
+      <label><input type="checkbox" id="speak-letters" checked> Speak letters aloud (text-to-speech)</label>
+    </div>
+
+    <button id="start-btn" class="primary">Start Game</button>
+  </section>
+
+  <!-- ============ GAME SCREEN ============ -->
+  <section id="game-screen" class="hidden">
+    <div class="game-layout">
+      <div id="board-wrap">
+        <div id="board"></div>
+        <div id="promo-picker" class="hidden"></div>
+      </div>
+
+      <div id="panel">
+        <div id="status-box">
+          <div id="turn-indicator">White to move</div>
+          <div id="result-indicator"></div>
+        </div>
+
+        <div id="settings-summary"></div>
+
+        <div id="stats-box">
+          <h3>Memory Stats</h3>
+          <div id="stats-content">No challenges yet.</div>
+        </div>
+
+        <div class="controls">
+          <button id="new-game-btn">New Game</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CHALLENGE OVERLAY ============ -->
+  <div id="challenge-overlay" class="hidden">
+    <div class="challenge-box">
+      <h2>Memory Check</h2>
+
+      <div id="challenge-step-letter">
+        <p id="letter-prompt" class="prompt"></p>
+        <div id="letter-grid" class="letter-grid"></div>
+      </div>
+
+      <div id="challenge-step-position" class="hidden">
+        <p id="position-prompt" class="prompt"></p>
+        <div id="palette"></div>
+        <div id="recon-board"></div>
+        <button id="submit-position" class="primary">Submit Position</button>
+      </div>
+
+      <div id="challenge-result" class="hidden">
+        <div id="result-content"></div>
+        <button id="continue-btn" class="primary">Continue Game</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="lib/chess.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
